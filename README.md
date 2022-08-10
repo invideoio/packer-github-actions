@@ -43,10 +43,19 @@ jobs:
         uses: hashicorp/packer-github-actions@master
         with:
           command: fix
+      
+      # checkout to forked gh-action
+      - name: Checkout private github action
+        uses: actions/checkout@v2
+        with:
+          repository: invideoio/packer-github-actions
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          ref: v1.0.0
+          path: .github/actions
 
       # validate templates
       - name: Validate Template
-        uses: hashicorp/packer-github-actions@master
+        uses: ./.github/actions
         with:
           command: validate
           arguments: -syntax-only
@@ -54,7 +63,7 @@ jobs:
 
       # build artifact
       - name: Build Artifact
-        uses: hashicorp/packer-github-actions@master
+        uses: ./.github/actions
         with:
           command: build
           arguments: "-color=false -on-error=abort"
